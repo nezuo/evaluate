@@ -1,130 +1,9 @@
 --< Modules >--
 local Tokenize = require(script.Tokenize)
-local Queue = require(script.Queue)
 local Stack = require(script.Stack)
 local ASTNode = require(script.ASTNode)
 
 --< Functions >--
---[[
-formASTNode.prototype.toString = function(count) {
-    if (!this.leftChildNode && !this.rightChildNode)
-        return this.token + "\t=>null\n" + Array(count+1).join("\t") + "=>null";
-        
-    var count = count || 1;
-    count++;
-    
-    return this.token + "\t=>" + this.leftChildNode.toString(count) + "\n" + Array(count).join("\t") + "=>" + this.rightChildNode.toString(count);
-};
-]]
-
---[[
-RPN Method
-
-local function Parse(str)
-    local OutputQueue = Queue.new()
-    local OperatorStack = Stack.new()
-
-    local Tokens = Tokenize(str)
-
-    for _,token in ipairs(Tokens) do
-        if token.Type == "Literal" or token.Type == "Variable" then
-            OutputQueue:Push(token)
-        elseif token.Type == "Function" or token.Type == "Left Parenthesis" then
-            OperatorStack:Push(token)
-        elseif token.Type == "Function Argument Separator" then
-            while OperatorStack:Peek().Type ~= "Left Parenthesis" do
-                OutputQueue:Push(OperatorStack:Pop())
-            end
-        elseif token.Type == "Operator" then
-            local TopOperator = OperatorStack:Peek()
-
-            while TopOperator and TopOperator.Type == "Operator" and ((token.Associativity == "Left" and token.Precedence <= TopOperator.Precedence) or (token.Associativity == "Right" and token.Precedence < TopOperator.Precedence)) do
-                OutputQueue:Push(OperatorStack:Pop())
-                TopOperator = OperatorStack:Peek()
-            end
-
-            OperatorStack:Push(token)
-        elseif token.Type == "Right Parenthesis" then
-            while OperatorStack:Peek().Type ~= "Left Parenthesis" do
-                OutputQueue:Push(OperatorStack:Pop())
-            end
-
-            OperatorStack:Pop()
-        end
-
-        if OperatorStack:Peek() and OperatorStack:Peek().Type == "Function" then
-            OutputQueue:Push(OperatorStack:Pop())
-        end
-    end
-
-    while OperatorStack:Peek() do
-        OutputQueue:Push(OperatorStack:Pop())
-    end
-
-    return OutputQueue
-end
---]]
-
---[[
-    OLD AST
-
-    local function Parse(str)
-    local OutputStack = Stack.new()
-    local OperatorStack = Stack.new()
-
-    local Tokens = Tokenize(str)
-
-    local function AddNode(stack, operator)
-        local RightNode = stack:Pop()
-        local LeftNode = stack:Pop()
-
-        stack:Push(ASTNode.new(operator, LeftNode, RightNode))
-    end
-
-    for _,token in ipairs(Tokens) do
-        if token.Type == "Literal" or token.Type == "Variable" then
-            OutputStack:Push(ASTNode.new(token, nil, nil))
-        elseif token.Type == "Function" or token.Type == "Left Parenthesis" then
-            OperatorStack:Push(token)
-        elseif token.Type == "Function Argument Separator" then
-            while OperatorStack:Peek().Type ~= "Left Parenthesis" do
-                OutputStack:Push(OperatorStack:Pop())
-            end
-        elseif token.Type == "Operator" then
-            local TopOperator = OperatorStack:Peek()
-
-            while TopOperator and TopOperator.Type == "Operator" and ((token.Associativity == "Left" and token.Precedence <= TopOperator.Precedence) or (token.Associativity == "Right" and token.Precedence < TopOperator.Precedence)) do
-                AddNode(OutputStack, OperatorStack:Pop())
-                TopOperator = OperatorStack:Peek()
-            end
-
-            OperatorStack:Push(token)
-        elseif token.Type == "Right Parenthesis" then
-            while OperatorStack:Peek() and OperatorStack:Peek().Type ~= "Left Parenthesis" do
-                AddNode(OutputStack, OperatorStack:Pop())
-            end
-
-            --OperatorStack:Pop()
-        end
-
-        if OperatorStack:Peek() and OperatorStack:Peek().Type == "Function" then
-            local RightBranch = OutputStack:Pop()
-            local LeftBranch = OutputStack:Pop()
-
-            OutputStack:Push(ASTNode.new(token, LeftBranch, RightBranch))
-
-            AddNode(Ou)
-        end
-    end
-
-    while OperatorStack:Peek() do
-        AddNode(OutputStack, OperatorStack:Pop())
-    end
-
-    return OutputStack:Pop()
-end
---]]
-
 local function Parse(str)
     local Operators = Stack.new()
     local Output = Stack.new()
@@ -183,24 +62,7 @@ local function SolveAST(tree)
 end
 
 local function Evaluate(str)
-    --[[
-        RPN
-    local RPN = Parse(str)
-
-    local Values = {}
-
-    for _,token in ipairs(RPN) do
-        table.insert(Values, token.Value)
-    end
-
-    print(table.concat(Values, " "))
-    ]]
-    
-    print(SolveAST(Parse(str)))
-
     return SolveAST(Parse(str))
 end
-
--- "3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3"
 
 return Evaluate
