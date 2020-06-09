@@ -120,4 +120,16 @@ return function()
     it("should solve correctly x7", function()
         expect(Evaluation("sin(0.5) + sqrt(4 + 5 * 3)")).to.equal(math.sin(0.5) + math.sqrt(4 + 5 * 3))
     end)
+
+    it("should solve correctly x8", function()
+        expect(Evaluation("sin(0.5) + $var", {var = 2.35})).to.equal(math.sin(0.5) + 2.35)
+    end)
+
+    it("should solve correctly x9", function()
+        expect(Evaluation("$varOne*$varTwo", {varOne = 3, varTwo = 5})).to.equal(3*5)
+    end)
+
+    it("should solve correctly x10", function()
+        expect(Evaluation("(3 * ($Level+2)) / 2", {Level = 3})).to.equal((3 * (3+2)) / 2)
+    end)
 end

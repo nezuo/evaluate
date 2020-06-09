@@ -23,8 +23,14 @@ local function Parse(str, variables)
     end
 
     for _,token in ipairs(Tokens) do
-        if token.Type == "Literal" or token.Type == "Variable" then
+        if token.Type == "Literal" then
             Output:Push(ASTNode.new(token))
+        end
+
+        if token.Type == "Variable" then
+            Output:Push(ASTNode.new({
+                Value = variables[token.Value];
+            }))
         end
 
         if token.Type == "Left Parenthesis" then
