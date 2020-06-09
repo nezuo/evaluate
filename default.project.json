@@ -7,6 +7,10 @@
       "$className": "ReplicatedStorage",
       "$path": "src",
 
+      "Evaluate": {
+        "$path": "src/Evaluate"
+      },
+
       "TestEZ": {
         "$path": "dependencies/testez/src"
       }

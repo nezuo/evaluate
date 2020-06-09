@@ -1,3 +1,6 @@
 [submodule "dependencies/testez"]
 	path = dependencies/testez
 	url = https://github.com/Roblox/testez/
+[submodule "dependencies/serpent"]
+	path = dependencies/serpent
+	url = https://github.com/pkulchenko/serpent

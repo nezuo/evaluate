@@ -13,23 +13,33 @@ local function Parse(str, variables)
 
     local function AddNode(stack, operator)
         local RightNode = stack:Pop()
-        local LeftNode = stack:Pop()
+
+        local LeftNode = nil
+        if operator.Type ~= "Function" then
+            LeftNode = stack:Pop()
+        end
 
         stack:Push(ASTNode.new(operator, LeftNode, RightNode))
     end
 
     for _,token in ipairs(Tokens) do
+        if token.Type == "Literal" or token.Type == "Variable" then
+            Output:Push(ASTNode.new(token))
+        end
+
         if token.Type == "Left Parenthesis" then
             Operators:Push(token)
-        elseif token.Type == "Right Parenthesis" then
+        end
+
+        if token.Type == "Right Parenthesis" then
             while Operators:Peek() and Operators:Peek().Type ~= "Left Parenthesis" do
                 AddNode(Output, Operators:Pop())
             end
 
             Operators:Pop()
-        elseif token.Type == "Function Argument Separator" then
-            AddNode(Output, token)
-        elseif token.Type == "Operator" or token.Type == "Function" then
+        end
+
+        if token.Type == "Operator" or token.Type == "Function" then
             local Operator = Operators:Peek()
 
             while Operator and Operator.Type ~= "Left Parenthesis" and (Operator.Precedence > token.Precedence or (token.Associativity == "Left" and Operator.Precedence == token.Precedence)) do
@@ -38,12 +48,6 @@ local function Parse(str, variables)
             end
 
             Operators:Push(token)
-        elseif token.Type == "Literal" then
-            Output:Push(ASTNode.new(token))
-        elseif token.Type == "Variable" then
-            Output:Push(ASTNode.new({
-                Value = variables[token.Value];
-            }))
         end
     end
 
@@ -53,6 +57,7 @@ local function Parse(str, variables)
 
     return Output:Pop()
 end
+
 --< Module >--
 local function SolveAST(tree)
     if tree.Token.Value == "^" then
@@ -77,7 +82,9 @@ local function SolveAST(tree)
 end
 
 local function Evaluate(str, variables)
-    return SolveAST(Parse(str, variables))
+    local Tree = Parse(str, variables)
+
+    return SolveAST(Tree)
 end
 
 return Evaluate

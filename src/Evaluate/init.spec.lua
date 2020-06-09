@@ -114,6 +114,10 @@ return function()
     end)
 
     it("should solve correctly x6", function()
-        expect(Evaluation("sqrt(4 + 5 * 3) + sin(0.5)")).to.equal(math.sqrt(4 + 5 * 3) + math.sin(0.5))
+        expect(Evaluation("1+sqrt(4)")).to.equal(1+math.sqrt(4))
+    end)
+
+    it("should solve correctly x7", function()
+        expect(Evaluation("sin(0.5) + sqrt(4 + 5 * 3)")).to.equal(math.sin(0.5) + math.sqrt(4 + 5 * 3))
     end)
 end
