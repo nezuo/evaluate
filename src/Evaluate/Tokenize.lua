@@ -26,6 +26,8 @@ local function Tokenize(str)
     local NumberBuffer = {}
     local LetterBuffer = {}
 
+    local IsVariable = false
+
     local function ClearNumberBuffer()
         if #NumberBuffer > 0 then
             table.insert(Result, Token("Literal", table.concat(NumberBuffer)))
@@ -36,7 +38,9 @@ local function Tokenize(str)
 
     local function ClearLetterBuffer()
         if #LetterBuffer > 0 then
-            table.insert(Result, Token("Variable", table.concat(LetterBuffer)))
+            table.insert(Result, Token(IsVariable and "Variable" or "Function", table.concat(LetterBuffer)))
+
+            IsVariable = false
 
             LetterBuffer = {}
         end
@@ -67,7 +71,9 @@ local function Tokenize(str)
         elseif character == ")" then
             table.insert(Result, Token("Right Parenthesis", character))
         elseif character == "," then
-            table.insert(Result, Token("Function Argument Seperator", character))
+            table.insert(Result, Token("Function Argument Separator", character))
+        elseif character == "$" then
+            IsVariable = true
         end
     end
 

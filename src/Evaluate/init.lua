@@ -1,10 +1,11 @@
 --< Modules >--
+local Functions = require(script.Functions)
 local Tokenize = require(script.Tokenize)
 local Stack = require(script.Stack)
 local ASTNode = require(script.ASTNode)
 
 --< Functions >--
-local function Parse(str)
+local function Parse(str, variables)
     local Operators = Stack.new()
     local Output = Stack.new()
 
@@ -26,14 +27,23 @@ local function Parse(str)
             end
 
             Operators:Pop()
-        elseif token.Type == "Operator" then
-            while Operators:Peek() and Operators:Peek().Type ~= "Left Parenthesis" and Operators:Peek().Precedence >= token.Precedence do
+        elseif token.Type == "Function Argument Separator" then
+            AddNode(Output, token)
+        elseif token.Type == "Operator" or token.Type == "Function" then
+            local Operator = Operators:Peek()
+
+            while Operator and Operator.Type ~= "Left Parenthesis" and (Operator.Precedence > token.Precedence or (token.Associativity == "Left" and Operator.Precedence == token.Precedence)) do
                 AddNode(Output, Operators:Pop())
+                Operator = Operators:Peek()
             end
 
             Operators:Push(token)
         elseif token.Type == "Literal" then
-            Output:Push(ASTNode.new(token, nil, nil))
+            Output:Push(ASTNode.new(token))
+        elseif token.Type == "Variable" then
+            Output:Push(ASTNode.new({
+                Value = variables[token.Value];
+            }))
         end
     end
 
@@ -43,7 +53,6 @@ local function Parse(str)
 
     return Output:Pop()
 end
-
 --< Module >--
 local function SolveAST(tree)
     if tree.Token.Value == "^" then
@@ -52,17 +61,23 @@ local function SolveAST(tree)
         return SolveAST(tree.LeftChildNode) * SolveAST(tree.RightChildNode)
     elseif tree.Token.Value == "/" then
         return SolveAST(tree.LeftChildNode) / SolveAST(tree.RightChildNode)
+    elseif tree.Token.Value == "%" then
+        return SolveAST(tree.LeftChildNode) % SolveAST(tree.RightChildNode)
     elseif tree.Token.Value == "+" then
         return SolveAST(tree.LeftChildNode) + SolveAST(tree.RightChildNode)
     elseif tree.Token.Value == "-" then
         return SolveAST(tree.LeftChildNode) - SolveAST(tree.RightChildNode)
+    elseif tree.Token.Type == "Function" then
+        return Functions[tree.Token.Value](SolveAST(tree.RightChildNode))
+    elseif tree.Token.Type == "Function Argument Separator" then
+        return table.pack(SolveAST(tree.LeftChildNode), SolveAST(tree.RightChildNode))
     else
         return tonumber(tree.Token.Value)
     end
 end
 
-local function Evaluate(str)
-    return SolveAST(Parse(str))
+local function Evaluate(str, variables)
+    return SolveAST(Parse(str, variables))
 end
 
 return Evaluate

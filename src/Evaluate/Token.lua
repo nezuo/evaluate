@@ -22,7 +22,7 @@ local function Token(type, value)
     return {
         Type = type;
         Value = value;
-        Precedence = Precedence[value];
+        Precedence = type == "Function" and 4 or Precedence[value];
         Associativity = Associativity[value];
     }
 end
