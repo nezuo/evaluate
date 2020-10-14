@@ -1,135 +1,135 @@
 return function()
-    local Evaluation = require(script.Parent)
+    local Evaluate = require(script.Parent)
 
     it("should add 1 to 1", function()
-        expect(Evaluation("1 + 1")).to.equal(1 + 1)
+        expect(Evaluate("1 + 1")).to.equal(1 + 1)
     end)
 
     it("should subtract 1 from 1", function()
-        expect(Evaluation("1 - 1")).to.equal(1 - 1)
+        expect(Evaluate("1 - 1")).to.equal(1 - 1)
     end)
 
     it("should multiply 2 by 2", function()
-        expect(Evaluation("2 * 2")).to.equal(2 * 2)
+        expect(Evaluate("2 * 2")).to.equal(2 * 2)
     end)
 
     it("should divide 8 by 2", function()
-        expect(Evaluation("8 / 2")).to.equal(8 / 2)
+        expect(Evaluate("8 / 2")).to.equal(8 / 2)
     end)
 
     it("should take 8 to the power of 2", function()
-        expect(Evaluation("8 ^ 2")).to.equal(8 ^ 2)
+        expect(Evaluate("8 ^ 2")).to.equal(8 ^ 2)
     end)
 
     it("should take 8 modulo 2", function()
-        expect(Evaluation("8 % 2")).to.equal(8 % 2)
+        expect(Evaluate("8 % 2")).to.equal(8 % 2)
     end)
 
     it("should solve abs", function()
-        expect(Evaluation("abs(0-4)")).to.equal(math.abs(-4))
+        expect(Evaluate("abs(0-4)")).to.equal(math.abs(-4))
     end)
 
     it("should solve acos", function()
-        expect(Evaluation("acos(0)")).to.equal(math.acos(0))
+        expect(Evaluate("acos(0)")).to.equal(math.acos(0))
     end)
 
     it("should solve asin", function()
-        expect(Evaluation("asin(1)")).to.equal(math.asin(1))
+        expect(Evaluate("asin(1)")).to.equal(math.asin(1))
     end)
 
     it("should solve atan", function()
-        expect(Evaluation("atan(4)")).to.equal(math.atan(4))
+        expect(Evaluate("atan(4)")).to.equal(math.atan(4))
     end)
 
     it("should solve ceil", function()
-        expect(Evaluation("ceil(2.2)")).to.equal(math.ceil(2.2))
+        expect(Evaluate("ceil(2.2)")).to.equal(math.ceil(2.2))
     end)
 
     it("should solve cos", function()
-        expect(Evaluation("cos(4)")).to.equal(math.cos(4))
+        expect(Evaluate("cos(4)")).to.equal(math.cos(4))
     end)
 
     it("should solve cosh", function()
-        expect(Evaluation("cosh(4)")).to.equal(math.cosh(4))
+        expect(Evaluate("cosh(4)")).to.equal(math.cosh(4))
     end)
 
     it("should solve deg", function()
-        expect(Evaluation("deg(1.3)")).to.equal(math.deg(1.3))
+        expect(Evaluate("deg(1.3)")).to.equal(math.deg(1.3))
     end)
 
     it("should solve exp", function()
-        expect(Evaluation("exp(1.3)")).to.equal(math.exp(1.3))
+        expect(Evaluate("exp(1.3)")).to.equal(math.exp(1.3))
     end)
 
     it("should solve floor", function()
-        expect(Evaluation("floor(1.3)")).to.equal(math.floor(1.3))
+        expect(Evaluate("floor(1.3)")).to.equal(math.floor(1.3))
     end)
 
     it("should solve rad", function()
-        expect(Evaluation("rad(90)")).to.equal(math.rad(90))
+        expect(Evaluate("rad(90)")).to.equal(math.rad(90))
     end)
 
     it("should solve sign", function()
-        expect(Evaluation("sign(4)")).to.equal(math.sign(4))
+        expect(Evaluate("sign(4)")).to.equal(math.sign(4))
     end)
 
     it("should solve sin", function()
-        expect(Evaluation("sin(4)")).to.equal(math.sin(4))
+        expect(Evaluate("sin(4)")).to.equal(math.sin(4))
     end)
 
     it("should solve sinh", function()
-        expect(Evaluation("sinh(4)")).to.equal(math.sinh(4))
+        expect(Evaluate("sinh(4)")).to.equal(math.sinh(4))
     end)
 
     it("should solve sqrt", function()
-        expect(Evaluation("sqrt(4)")).to.equal(math.sqrt(4))
+        expect(Evaluate("sqrt(4)")).to.equal(math.sqrt(4))
     end)
 
     it("should solve tan", function()
-        expect(Evaluation("tan(4)")).to.equal(math.tan(4))
+        expect(Evaluate("tan(4)")).to.equal(math.tan(4))
     end)
 
     it("should solve tanh", function()
-        expect(Evaluation("tanh(4)")).to.equal(math.tanh(4))
+        expect(Evaluate("tanh(4)")).to.equal(math.tanh(4))
     end)
 
     it("should solve correctly x1", function()
-        expect(Evaluation("5 + ((1 + 2) * 4) - 3")).to.equal(5 + ((1 + 2) * 4) - 3)
+        expect(Evaluate("5 + ((1 + 2) * 4) - 3")).to.equal(5 + ((1 + 2) * 4) - 3)
     end)
 
     it("should solve correctly x2", function()
-        expect(Evaluation("3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3")).to.equal(3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3)
+        expect(Evaluate("3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3")).to.equal(3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3)
     end)
 
     it("should solve correctly x3", function()
-        expect(Evaluation("3 + 4 ^ 3 * 2 % 4 / ( 1 - 5 ) ^ 2 ^ 3")).to.equal(3 + 4 ^ 3 * 2 % 4 / ( 1 - 5 ) ^ 2 ^ 3)
+        expect(Evaluate("3 + 4 ^ 3 * 2 % 4 / ( 1 - 5 ) ^ 2 ^ 3")).to.equal(3 + 4 ^ 3 * 2 % 4 / ( 1 - 5 ) ^ 2 ^ 3)
     end)
 
     it("should solve correctly x4", function()
-        expect(Evaluation("4 + 4.5 ^ 3 * 2 ^ 2.2 ^ 3")).to.equal(4 + 4.5 ^ 3 * 2 ^ 2.2 ^ 3)
+        expect(Evaluate("4 + 4.5 ^ 3 * 2 ^ 2.2 ^ 3")).to.equal(4 + 4.5 ^ 3 * 2 ^ 2.2 ^ 3)
     end)
 
     it("should solve correctly x5", function()
-        expect(Evaluation("sqrt(4) + 3")).to.equal(math.sqrt(4) + 3)
+        expect(Evaluate("sqrt(4) + 3")).to.equal(math.sqrt(4) + 3)
     end)
 
     it("should solve correctly x6", function()
-        expect(Evaluation("1+sqrt(4)")).to.equal(1+math.sqrt(4))
+        expect(Evaluate("1+sqrt(4)")).to.equal(1+math.sqrt(4))
     end)
 
     it("should solve correctly x7", function()
-        expect(Evaluation("sin(0.5) + sqrt(4 + 5 * 3)")).to.equal(math.sin(0.5) + math.sqrt(4 + 5 * 3))
+        expect(Evaluate("sin(0.5) + sqrt(4 + 5 * 3)")).to.equal(math.sin(0.5) + math.sqrt(4 + 5 * 3))
     end)
 
     it("should solve correctly x8", function()
-        expect(Evaluation("sin(0.5) + $var", {var = 2.35})).to.equal(math.sin(0.5) + 2.35)
+        expect(Evaluate("sin(0.5) + $var", {var = 2.35})).to.equal(math.sin(0.5) + 2.35)
     end)
 
     it("should solve correctly x9", function()
-        expect(Evaluation("$varOne*$varTwo", {varOne = 3, varTwo = 5})).to.equal(3*5)
+        expect(Evaluate("$varOne*$varTwo", {varOne = 3, varTwo = 5})).to.equal(3*5)
     end)
 
     it("should solve correctly x10", function()
-        expect(Evaluation("(3 * ($Level+2)) / 2", {Level = 3})).to.equal((3 * (3+2)) / 2)
+        expect(Evaluate("(3 * ($Level+2)) / 2", {Level = 3})).to.equal((3 * (3+2)) / 2)
     end)
 end
