@@ -1,0 +1,2 @@
+[tools]
+run-in-roblox = { source = "rojo-rbx/run-in-roblox", version = "0.3.0" }
