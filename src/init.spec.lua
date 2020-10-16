@@ -93,6 +93,22 @@ return function()
         expect(Evaluate("tanh(4)")).to.equal(math.tanh(4))
     end)
 
+    it("should solve pow", function()
+        expect(Evaluate("pow(4, 2)")).to.equal(math.pow(4, 2))
+    end)
+
+    it("should solve min", function()
+        expect(Evaluate("min(2, 4, 5, 3)")).to.equal(math.min(2, 4, 5, 3))
+    end)
+
+    it("should solve max", function()
+        expect(Evaluate("min(2, 5)")).to.equal(math.pow(2, 5))
+    end)
+
+    it("should solve clamp", function()
+        expect(Evaluate("clamp(10, 1, 5)")).to.equal(math.clamp(10, 1, 5))
+    end)
+
     it("should solve correctly x1", function()
         expect(Evaluate("5 + ((1 + 2) * 4) - 3")).to.equal(5 + ((1 + 2) * 4) - 3)
     end)
