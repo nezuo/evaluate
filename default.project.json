@@ -5,10 +5,9 @@
 
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-      "$path": "src",
 
       "Evaluate": {
-        "$path": "src/Evaluate"
+        "$path": "src"
       },
 
       "TestEZ": {
