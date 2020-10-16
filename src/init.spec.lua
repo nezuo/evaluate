@@ -97,6 +97,10 @@ return function()
         expect(Evaluate("pow(4, 2)")).to.equal(math.pow(4, 2))
     end)
 
+    it("should solve pow", function()
+        expect(Evaluate("pow(4, 2^5 + 2)")).to.equal(math.pow(4, 2^5 + 2))
+    end)
+
     it("should solve min", function()
         expect(Evaluate("min(2, 4, 5, 3)")).to.equal(math.min(2, 4, 5, 3))
     end)
