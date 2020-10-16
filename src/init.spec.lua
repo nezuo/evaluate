@@ -102,7 +102,7 @@ return function()
     end)
 
     it("should solve correctly x3", function()
-        expect(Evaluate("3 + 4 ^ 3 * 2 % 4 / ( 1 - 5 ) ^ 2 ^ 3")).to.equal(3 + 4 ^ 3 * 2 % 4 / ( 1 - 5 ) ^ 2 ^ 3)
+        expect(Evaluate("10 + 4 ^ 3 * 2 % 4 / ( 1 - 5 ) ^ 2 ^ 3")).to.equal(10 + 4 ^ 3 * 2 % 4 / ( 1 - 5 ) ^ 2 ^ 3)
     end)
 
     it("should solve correctly x4", function()

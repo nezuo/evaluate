@@ -1,6 +1,9 @@
 --< Modules >--
 local Token = require(script.Parent.Token)
 
+--< Variables >--
+local Operators = {"^", "*", "/", "%", "+", "-"}
+
 --< Functions >--
 local function IsDigit(character)
     return tonumber(character) ~= nil
@@ -11,8 +14,6 @@ local function IsLetter(character)
 end
 
 local function IsOperator(character)
-    local Operators = {"^", "*", "/", "%", "+", "-"}
-
     return table.find(Operators, character) ~= nil
 end
 
@@ -20,8 +21,8 @@ end
 local function Tokenize(str)
     local Result = {}
 
-    str = string.gsub(str, "%s+", "") -- Remove whitespace
-    str = string.split(str, "")
+    str = string.gsub(str, "%s+", "") -- Remove all whitespace.
+    str = string.split(str, "") -- Split into individual characters.
 
     local NumberBuffer = {}
     local LetterBuffer = {}
@@ -47,19 +48,14 @@ local function Tokenize(str)
     end
 
     for _,character in ipairs(str) do
-        -- Clear buffers
-        if IsLetter(character) == false then
+        if not IsLetter(character) then
             ClearLetterBuffer()
-        elseif #NumberBuffer > 0 then
-            ClearNumberBuffer()
-            table.insert(Result, Token("Operator", "*"))
         end
-
-        if IsDigit(character) == false and character ~= "." then
+        
+        if not IsDigit(character) and character ~= "." then
             ClearNumberBuffer()
         end
 
-        -- Tokenize
         if IsDigit(character) or character == "." then
             table.insert(NumberBuffer, character)
         elseif IsLetter(character) then
