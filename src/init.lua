@@ -2,6 +2,7 @@
 local Functions = require(script.Functions)
 local Queue = require(script.Queue)
 local Stack = require(script.Stack)
+local Token = require(script.Token)
 local Tokenize = require(script.Tokenize)
 
 -- TODO: Errors, lots and lots of errors
@@ -56,8 +57,17 @@ local function ShuntingYard(expression)
         end
 
         if token.Type == "Left Parenthesis" then
-            if PreviousToken ~= nil and PreviousToken.Type == "Function" then
-                Output:Enqueue(token)
+            if PreviousToken ~= nil then
+                local Type = PreviousToken.Type
+
+                if Type == "Literal" or Type == "Right Parenthesis" or Type == "Variable" then
+                    -- Add multiplication operator for implicit multiplication.
+                    Operators:Push(Token("Operator", "*"))
+                end
+
+                if Type == "Function" then
+                    Output:Enqueue(token)
+                end
             end
 
             Operators:Push(token)
