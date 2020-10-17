@@ -130,7 +130,7 @@ return function()
     end)
 
     it("should solve implicit multiplication with variable", function()
-        expect(Evaluate("23var", {var = 2})).to.equal(23*2)
+        expect(Evaluate("23(var)", {var = 2})).to.equal(23*2)
     end)
 
     it("should solve correctly x1", function()
