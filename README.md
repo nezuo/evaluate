@@ -10,7 +10,7 @@ print(Result) -- 8
 Variable Example:
 ```lua
 local Evaluate = require(...)
-local Result = Evaluate("$var * 2", {var = 6})
+local Result = Evaluate("var * 2", {var = 6})
 
 print(Result) -- 12
 ```
