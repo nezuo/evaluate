@@ -1,29 +1,29 @@
 --< Module >--
-local Stack = {}
-Stack.__index = Stack
+local Queue = {}
+Queue.__index = Queue
 
-function Stack.new()
-    local self = setmetatable({}, Stack)
+function Queue.new()
+    local self = setmetatable({}, Queue)
 
     self.Elements = {}
 
     return self
 end
 
-function Stack:IsEmpty()
+function Queue:IsEmpty()
     return #self.Elements == 0
 end
 
-function Stack:Peek()
+function Queue:Peek()
     return self.Elements[#self.Elements]
 end
 
-function Stack:Push(element)
+function Queue:Enqueue(element)
     table.insert(self.Elements, element)
 end
 
-function Stack:Pop()
+function Queue:Dequeue()
     return table.remove(self.Elements)
 end
 
-return Stack
+return Queue

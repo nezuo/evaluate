@@ -93,6 +93,38 @@ return function()
         expect(Evaluate("tanh(4)")).to.equal(math.tanh(4))
     end)
 
+    it("should solve pow", function()
+        expect(Evaluate("pow(4, 2^4)")).to.equal(math.pow(4, 2^4))
+    end)
+
+    it("should solve min", function()
+        expect(Evaluate("min(2, 4, 5, 3)")).to.equal(math.min(2, 4, 5, 3))
+    end)
+
+    it("should solve max", function()
+        expect(Evaluate("max(2, 5)")).to.equal(math.max(2, 5))
+    end)
+
+    it("should solve clamp", function()
+        expect(Evaluate("clamp(10, 1, 5)")).to.equal(math.clamp(10, 1, 5))
+    end)
+
+    it("should handle negative unary operator", function()
+        expect(Evaluate("-5")).to.equal(-5)
+    end)
+
+    it("should handle positive unary operator", function()
+        expect(Evaluate("+5")).to.equal(5)
+    end)
+
+    it("should handle unary operators", function()
+        expect(Evaluate("-(5 + -6)")).to.equal(-(5 + -6))
+    end)
+
+    it("should solve composite functions", function()
+        expect(Evaluate("pow(4, max(5, 2, clamp(10, 1, 5)))")).to.equal(math.pow(4, math.max(5, 2, math.clamp(10, 1, 5))))
+    end)
+
     it("should solve correctly x1", function()
         expect(Evaluate("5 + ((1 + 2) * 4) - 3")).to.equal(5 + ((1 + 2) * 4) - 3)
     end)
@@ -122,14 +154,14 @@ return function()
     end)
 
     it("should solve correctly x8", function()
-        expect(Evaluate("sin(0.5) + $var", {var = 2.35})).to.equal(math.sin(0.5) + 2.35)
+        expect(Evaluate("sin(0.5) + var", {var = 2.35})).to.equal(math.sin(0.5) + 2.35)
     end)
 
     it("should solve correctly x9", function()
-        expect(Evaluate("$varOne*$varTwo", {varOne = 3, varTwo = 5})).to.equal(3*5)
+        expect(Evaluate("var1*var2", {var1 = 3, var2 = 5})).to.equal(3*5)
     end)
 
     it("should solve correctly x10", function()
-        expect(Evaluate("(3 * ($Level+2)) / 2", {Level = 3})).to.equal((3 * (3+2)) / 2)
+        expect(Evaluate("(3 * (Level+2)) / 2", {Level = 3})).to.equal((3 * (3+2)) / 2)
     end)
 end
