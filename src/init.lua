@@ -7,6 +7,12 @@ local Tokenize = require(script.Tokenize)
 
 -- TODO: Errors, lots and lots of errors
 
+--< Constants >--
+local CONSTANTS = {
+    pi = math.pi;
+    huge = math.huge;
+}
+
 --< Functions >--
 local function ShuntOperators(output, stack, token)
     local Operator = stack:Peek()
@@ -171,6 +177,14 @@ local function Evaluate(str, variables)
     local RPN = ShuntingYard(str)
 
     --Validate(RPN)
+
+    variables = variables or {}
+
+    for constant,value in pairs(CONSTANTS) do
+        if variables[constant] == nil then
+            variables[constant] = value
+        end
+    end
 
     return SolveRPN(RPN, variables)
 end
