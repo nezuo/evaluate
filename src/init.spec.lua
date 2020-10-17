@@ -133,6 +133,18 @@ return function()
         expect(Evaluate("23(var)", {var = 2})).to.equal(23*2)
     end)
 
+    it("should use constant pi", function()
+        expect(Evaluate("23(pi)")).to.equal(23*math.pi)
+    end)
+
+    it("should use constant huge", function()
+        expect(Evaluate("23(huge)")).to.equal(23*math.huge)
+    end)
+
+    it("should use variable instead of constant", function()
+        expect(Evaluate("23(pi)", {pi = 5})).to.equal(23*5)
+    end)
+
     it("should solve correctly x1", function()
         expect(Evaluate("5 + ((1 + 2) * 4) - 3")).to.equal(5 + ((1 + 2) * 4) - 3)
     end)
