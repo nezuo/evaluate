@@ -21,5 +21,3 @@ local Result = Evaluate("sqrt(4) + 2")
 
 print(Result) -- 4
 ```
-
-NOTE: Does not support variables with numbers
