@@ -125,6 +125,14 @@ return function()
         expect(Evaluate("pow(4, max(5, 2, clamp(10, 1, 5)))")).to.equal(math.pow(4, math.max(5, 2, math.clamp(10, 1, 5))))
     end)
 
+    it("should solve implicit multiplication", function()
+        expect(Evaluate("(5-2)(3+5)")).to.equal((5-2)*(3+5))
+    end)
+
+    it("should solve implicit multiplication with variable", function()
+        expect(Evaluate("23var", {var = 2})).to.equal(23*2)
+    end)
+
     it("should solve correctly x1", function()
         expect(Evaluate("5 + ((1 + 2) * 4) - 3")).to.equal(5 + ((1 + 2) * 4) - 3)
     end)
