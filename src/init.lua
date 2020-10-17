@@ -1,96 +1,168 @@
 --< Modules >--
 local Functions = require(script.Functions)
-local Tokenize = require(script.Tokenize)
+local Queue = require(script.Queue)
 local Stack = require(script.Stack)
-local ASTNode = require(script.ASTNode)
+local Tokenize = require(script.Tokenize)
+
+-- TODO: Errors, lots and lots of errors
 
 --< Functions >--
-local function Parse(str, variables)
-    local Operators = Stack.new()
-    local Output = Stack.new()
+local function ShuntOperators(output, stack, token)
+    local Operator = stack:Peek()
 
-    local Tokens = Tokenize(str)
-
-    local function AddNode(stack, operator)
-        local RightNode = stack:Pop()
-
-        local LeftNode = nil
-        if operator.Type ~= "Function" then
-            LeftNode = stack:Pop()
-        end
-
-        stack:Push(ASTNode.new(operator, LeftNode, RightNode))
+    while Operator ~= nil and (Operator.Type == "Operator" or Operator.Type == "Unary Operator") and ((token.Associativity == "Left" and token.Precedence <= Operator.Precedence) or (token.Precedence < Operator.Precedence)) do
+        output:Enqueue(stack:Pop())
+        Operator = stack:Peek()
     end
+end
+
+local function ShuntingYard(expression)
+    local Operators = Stack.new()
+    local Output = Queue.new()
+
+    local Tokens = Tokenize(expression)
+
+    local PreviousToken = nil
 
     for _,token in ipairs(Tokens) do
         if token.Type == "Literal" then
-            Output:Push(ASTNode.new(token))
+           Output:Enqueue(token)
         end
 
         if token.Type == "Variable" then
-            Output:Push(ASTNode.new({
-                Value = variables[token.Value];
-            }))
+            Output:Enqueue(token)
+        end
+
+        if token.Type == "Function" then
+            Operators:Push(token)
+        end
+
+        if token.Type == "Function Argument Separator" then
+            while not Operators:IsEmpty() and Operators:Peek().Type ~= "Left Parenthesis" do
+                Output:Enqueue(Operators:Pop())
+            end
+        end
+
+        if token.Type == "Operator" then
+            ShuntOperators(Output, Operators, token)
+
+            Operators:Push(token)
+        end
+
+        if token.Type == "Unary Operator" then
+            ShuntOperators(Output, Operators, token)
+
+            Operators:Push(token)
         end
 
         if token.Type == "Left Parenthesis" then
+            if PreviousToken ~= nil and PreviousToken.Type == "Function" then
+                Output:Enqueue(token)
+            end
+
             Operators:Push(token)
         end
 
         if token.Type == "Right Parenthesis" then
-            while Operators:Peek() and Operators:Peek().Type ~= "Left Parenthesis" do
-                AddNode(Output, Operators:Pop())
+            while not Operators:IsEmpty() and Operators:Peek().Type ~= "Left Parenthesis" do
+                Output:Enqueue(Operators:Pop())
             end
 
             Operators:Pop()
-        end
 
-        if token.Type == "Operator" or token.Type == "Function" then
-            local Operator = Operators:Peek()
-
-            while Operator and Operator.Type ~= "Left Parenthesis" and (Operator.Precedence > token.Precedence or (token.Associativity == "Left" and Operator.Precedence == token.Precedence)) do
-                AddNode(Output, Operators:Pop())
-                Operator = Operators:Peek()
+            if not Operators:IsEmpty() and Operators:Peek().Type == "Function" then
+                Output:Enqueue(Operators:Pop())
             end
-
-            Operators:Push(token)
         end
+
+        PreviousToken = token
     end
 
-    while Operators:Peek() do
-        AddNode(Output, Operators:Pop())
+    while not Operators:IsEmpty() do
+        Output:Enqueue(Operators:Pop())
+    end
+
+    return Output.Elements
+end
+
+--< Module >--
+local function EvaluateOperation(operator, first, second)
+    if operator == "^" then
+        return first ^ second
+    elseif operator == "*" then
+        return first * second
+    elseif operator == "/" then
+        return first / second
+    elseif operator == "%" then
+        return first % second
+    elseif operator == "+" then
+        return first + second
+    elseif operator == "-" then
+        return first - second
+    end
+end
+
+local function SolveRPN(rpn, variables)
+    local Output = Stack.new()
+
+    for _,token in ipairs(rpn) do
+        if token.Type == "Unary Operator" then
+            local Value = Output:Pop()
+
+            if token.Value == "-" then
+                Output:Push(-tonumber(Value))
+            else
+                Output:Push(tonumber(Value))
+            end
+        end
+
+        if token.Type == "Operator" then
+            local Second = Output:Pop()
+            local First = Output:Pop()
+
+            Output:Push(EvaluateOperation(token.Value, First, Second))
+        end
+
+        if token.Type == "Function" then
+            local Arguments = {}
+
+            while not Output:IsEmpty() and Output:Peek() ~= "Left Parenthesis" do
+                table.insert(Arguments, 1, Output:Pop())
+            end
+
+            if Output:Peek() == "Left Parenthesis" then
+                Output:Pop()
+            end
+
+            Output:Push(Functions[token.Value](unpack(Arguments)))
+        end
+
+        if token.Type == "Left Parenthesis" then
+            Output:Push("Left Parenthesis")
+        end
+        
+        if token.Type == "Variable" then
+            Output:Push(variables[token.Value])
+        end
+
+        if token.Type == "Literal" then
+            Output:Push(tonumber(token.Value))
+        end
     end
 
     return Output:Pop()
 end
 
---< Module >--
-local function SolveAST(tree)
-    if tree.Token.Value == "^" then
-        return math.pow(SolveAST(tree.LeftChildNode), SolveAST(tree.RightChildNode))
-    elseif tree.Token.Value == "*" then
-        return SolveAST(tree.LeftChildNode) * SolveAST(tree.RightChildNode)
-    elseif tree.Token.Value == "/" then
-        return SolveAST(tree.LeftChildNode) / SolveAST(tree.RightChildNode)
-    elseif tree.Token.Value == "%" then
-        return SolveAST(tree.LeftChildNode) % SolveAST(tree.RightChildNode)
-    elseif tree.Token.Value == "+" then
-        return SolveAST(tree.LeftChildNode) + SolveAST(tree.RightChildNode)
-    elseif tree.Token.Value == "-" then
-        return SolveAST(tree.LeftChildNode) - SolveAST(tree.RightChildNode)
-    elseif tree.Token.Type == "Function" then
-        return Functions[tree.Token.Value](SolveAST(tree.RightChildNode))
-    elseif tree.Token.Type == "Function Argument Separator" then
-        return table.pack(SolveAST(tree.LeftChildNode), SolveAST(tree.RightChildNode))
-    else
-        return tonumber(tree.Token.Value)
-    end
+local function Validate(rpn)
+
 end
 
 local function Evaluate(str, variables)
-    local Tree = Parse(str, variables)
+    local RPN = ShuntingYard(str)
 
-    return SolveAST(Tree)
+    --Validate(RPN)
+
+    return SolveRPN(RPN, variables)
 end
 
 return Evaluate

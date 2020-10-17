@@ -1,4 +1,5 @@
 --< Modules >--
+local Functions = require(script.Parent.Functions)
 local Token = require(script.Parent.Token)
 
 --< Variables >--
@@ -25,9 +26,7 @@ local function Tokenize(str)
     str = string.split(str, "") -- Split into individual characters.
 
     local NumberBuffer = {}
-    local LetterBuffer = {}
-
-    local IsVariable = false
+    local IdentifierBuffer = {}
 
     local function ClearNumberBuffer()
         if #NumberBuffer > 0 then
@@ -37,44 +36,46 @@ local function Tokenize(str)
         end
     end
 
-    local function ClearLetterBuffer()
-        if #LetterBuffer > 0 then
-            table.insert(Result, Token(IsVariable and "Variable" or "Function", table.concat(LetterBuffer)))
+    local function ClearIdentifierBuffer()
+        if #IdentifierBuffer > 0 then
+            local Identifier = table.concat(IdentifierBuffer)
+            local Type = Functions[Identifier] ~= nil and "Function" or "Variable"
 
-            IsVariable = false
+            table.insert(Result, Token(Type, Identifier))
 
-            LetterBuffer = {}
+            IdentifierBuffer = {}
         end
     end
 
     for _,character in ipairs(str) do
-        if not IsLetter(character) then
-            ClearLetterBuffer()
+        if not IsLetter(character) and not (#IdentifierBuffer > 0 and IsDigit(character)) then
+            ClearIdentifierBuffer()
         end
         
         if not IsDigit(character) and character ~= "." then
             ClearNumberBuffer()
         end
-
-        if IsDigit(character) or character == "." then
+        
+        if IsLetter(character) or (#IdentifierBuffer > 0 and IsDigit(character)) then
+            table.insert(IdentifierBuffer, character)
+        elseif IsDigit(character) or character == "." then
             table.insert(NumberBuffer, character)
-        elseif IsLetter(character) then
-            table.insert(LetterBuffer, character)
         elseif IsOperator(character) then
-            table.insert(Result, Token("Operator", character))
+            local PreviousToken = Result[#Result]
+            local IsUnary = PreviousToken == nil or PreviousToken.Type == "Operator" or PreviousToken.Type == "Left Parenthesis" or PreviousToken.Type == "Function Argument Seperator" or PreviousToken.Type == "UnaryOperator"
+
+            table.insert(Result, Token(IsUnary and "Unary Operator" or "Operator", character))
         elseif character == "(" then
             table.insert(Result, Token("Left Parenthesis", character))
         elseif character == ")" then
             table.insert(Result, Token("Right Parenthesis", character))
         elseif character == "," then
             table.insert(Result, Token("Function Argument Separator", character))
-        elseif character == "$" then
-            IsVariable = true
         end
     end
 
     ClearNumberBuffer()
-    ClearLetterBuffer()
+    ClearIdentifierBuffer()
 
     return Result
 end
