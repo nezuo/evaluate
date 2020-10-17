@@ -4,9 +4,11 @@
 
 Features:
 - Supports variables
+- Support constants like pi
 - Supports standard mathematical operators
 - Functions with a variable number of arguments like min
 - Supports implicit multiplication, e.g. 2(x - y) which is the same as 2*(x - y)
+- Supports unary operators, e.g. -2
 
 ## Usage Examples:
 ```lua
