@@ -5,8 +5,6 @@ local Stack = require(script.Stack)
 local Token = require(script.Token)
 local Tokenize = require(script.Tokenize)
 
--- TODO: Errors, lots and lots of errors
-
 --< Constants >--
 local CONSTANTS = {
     pi = math.pi;
@@ -29,6 +27,7 @@ local function ShuntingYard(expression)
 
     local Tokens = Tokenize(expression)
 
+    local LastFunction = nil
     local PreviousToken = nil
 
     for _,token in ipairs(Tokens) do
@@ -42,11 +41,17 @@ local function ShuntingYard(expression)
 
         if token.Type == "Function" then
             Operators:Push(token)
+
+            LastFunction = token
         end
 
         if token.Type == "Function Argument Separator" then
             while not Operators:IsEmpty() and Operators:Peek().Type ~= "Left Parenthesis" do
                 Output:Enqueue(Operators:Pop())
+            end
+
+            if Operators:IsEmpty() and LastFunction == nil then
+                error("Unexpected comma.")
             end
         end
 
@@ -150,7 +155,7 @@ local function SolveRPN(rpn, variables)
                 Output:Pop()
             end
 
-            Output:Push(Functions[token.Value](unpack(Arguments)))
+            Output:Push(Functions[token.Value].Fn(unpack(Arguments)))
         end
 
         if token.Type == "Left Parenthesis" then
@@ -158,6 +163,10 @@ local function SolveRPN(rpn, variables)
         end
         
         if token.Type == "Variable" then
+            if variables[token.Value] == nil then
+                error("Unknown variable `" .. token.Value .. "`.")
+            end
+
             Output:Push(variables[token.Value])
         end
 
@@ -170,13 +179,55 @@ local function SolveRPN(rpn, variables)
 end
 
 local function Validate(rpn)
+    local Scope = Stack.new()
 
+    Scope:Push(0)
+
+    for _,token in ipairs(rpn) do
+        if token.Type == "Unary Operator" then
+            if Scope:Peek() < 1 then
+                error("Missing paramater(s) for operator " .. token.Value .. ".")
+            end
+        elseif token.Type == "Operator" then
+            if Scope:Peek() < 2 then
+                error("Missing paramater(s) for operator " .. token.Value .. ".")
+            end
+
+            Scope:Set(Scope:Size(), Scope:Peek() - 2 + 1)
+        elseif token.Type == "Function" then
+            local NumberOfArguments = Scope:Pop()
+
+            local Function = Functions[token.Value]
+
+            if NumberOfArguments == 0 or (Function.NumberOfParameters ~= nil and NumberOfArguments ~= Function.NumberOfParameters) then
+                error("Function `" .. token.Value .. "` expected " .. (Function.NumberOfParameters == nil and "" or Function.NumberOfParameters) .. " argument(s), got " .. NumberOfArguments .. ".")
+            end
+
+            if Scope:IsEmpty() then
+                error("Too many function calls, maximum scope exceeded.")
+            end
+
+            Scope:Set(Scope:Size(), Scope:Peek() + 1)
+        elseif token.Type == "Left Parenthesis" then
+            Scope:Push(0)
+        else
+            Scope:Set(Scope:Size(), Scope:Peek() + 1)
+        end
+    end
+
+    if Scope:Size() > 1 then
+        error("Too many unhandled function paramater lists.")
+    elseif Scope:Peek() > 1 then
+        error("Too many numbers or variables.")
+    elseif Scope:Peek() < 1 then
+        error("Empty expression.")
+    end
 end
 
 local function Evaluate(str, variables)
     local RPN = ShuntingYard(str)
 
-    --Validate(RPN)
+    Validate(RPN)
 
     variables = variables or {}
 

@@ -14,6 +14,14 @@ function Stack:IsEmpty()
     return #self.Elements == 0
 end
 
+function Stack:Set(index, element)
+    self.Elements[index] = element
+end
+
+function Stack:Size()
+    return #self.Elements
+end
+
 function Stack:Peek()
     return self.Elements[#self.Elements]
 end
