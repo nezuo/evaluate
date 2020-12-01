@@ -15,7 +15,7 @@ function Queue:IsEmpty()
 end
 
 function Queue:Peek()
-    return self.Elements[#self.Elements]
+    return self.Elements[1]
 end
 
 function Queue:Enqueue(element)
@@ -23,7 +23,7 @@ function Queue:Enqueue(element)
 end
 
 function Queue:Dequeue()
-    return table.remove(self.Elements)
+    return table.remove(self.Elements, 1)
 end
 
 return Queue
