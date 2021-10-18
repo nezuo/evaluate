@@ -1,0 +1,24 @@
+{
+  "name": "evaluate-test",
+  "tree": {
+    "$className": "DataModel",
+    "Players": {
+      "$properties": {
+        "CharacterAutoLoads": false
+      }
+    },
+    "ReplicatedStorage": {
+      "Vendor": {
+        "$path": "../vendor"
+      },
+      "evaluate": {
+        "$path": "../"
+      }
+    },
+    "ServerScriptService": {
+      "runTests": {
+        "$path": "runTests.server.lua"
+      }
+    }
+  }
+}
