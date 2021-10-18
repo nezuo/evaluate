@@ -1,9 +1,12 @@
-# Project place file
-/Evaluate.rbxlx
-
-# Roblox std
-/roblox.toml
+# Roblox model and place files
+/*.rbxm
+/*.rbxmx
+/*.rbxl
+/*.rbxlx
 
 # Roblox Studio lock files
 /*.rbxlx.lock
 /*.rbxl.lock
+
+# Roblox std
+/roblox.toml
