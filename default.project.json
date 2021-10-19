@@ -1,18 +1,6 @@
 {
-  "name": "Evaluation",
+  "name": "evaluate",
   "tree": {
-    "$className": "DataModel",
-
-    "ReplicatedStorage": {
-      "$className": "ReplicatedStorage",
-
-      "Evaluate": {
-        "$path": "src"
-      },
-
-      "TestEZ": {
-        "$path": "dependencies/testez/src"
-      }
-    }
+    "$path": "src"
   }
 }
