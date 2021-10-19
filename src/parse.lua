@@ -17,6 +17,10 @@ local function parseFunction(identifier, lexer, expression)
 
 	while lexer:peek() ~= nil and lexer:peek().kind ~= "Close Parenthesis" do
 		table.insert(arguments, expression(lexer, 1))
+
+		if lexer:peek() ~= nil and lexer:peek().kind == "Argument Separator" then
+			lexer:next()
+		end
 	end
 
 	lexer:expect("Close Parenthesis")
